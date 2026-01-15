@@ -14,9 +14,9 @@ public class Player : MonoBehaviour
 
     [HideInInspector] public Coroutine camCourotine; //camera method
 
-    [SerializeField] private buttonHandler buttonbottom;
-    [SerializeField] private buttonHandler buttonleft;
-    [SerializeField] private buttonHandler buttonright;
+    public buttonHandler buttonbottom;
+    public buttonHandler buttonleft;
+    public buttonHandler buttonright;
 
     float targetYaw; //save target yaw
     float targetPitch; //save target pitch
@@ -34,6 +34,7 @@ public class Player : MonoBehaviour
     {
         public List<Vector3> LookEuler;
         public int lookDefault;
+        public int lastLook;
         public float maxYaw;
         public float maxPitch;
 
@@ -113,14 +114,24 @@ public class Player : MonoBehaviour
             rotation.Add(Quaternion.Euler(rotate));
         }
 
-        int last = param.lookDefault;
-        int current = param.lookDefault;
+        int last;
+        int current;
 
-        while (Quaternion.Angle(transform.localRotation, rotation[param.lookDefault]) > 0.01f)
+        if (param.lastLook == -1)
         {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[param.lookDefault], Time.deltaTime * cameraSpeed);
+            current = param.lookDefault;
+        } else
+        {
+            current = param.lastLook;
+        }
+
+        while (Quaternion.Angle(transform.localRotation, rotation[current]) > 0.01f)
+        {
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[current], Time.deltaTime * cameraSpeed);
             yield return null;
         }
+
+        last = current;
 
         while (true)
         {

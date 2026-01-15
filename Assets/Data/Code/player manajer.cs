@@ -1,10 +1,8 @@
 using System.Collections.Generic;
 using System.Collections;
-using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.UIElements;
-using System.ComponentModel;
-using Unity.Collections;
+using System;
+using UnityEngine.UI;
 
 public class playermanajer : MonoBehaviour
 {
@@ -18,15 +16,17 @@ public class playermanajer : MonoBehaviour
     [HideInInspector] public Camera cam => Camera.main;
     [HideInInspector] public RaycastHit hit;
 
-    [SerializeField] public Vector2Int currentPos { get; private set; } //current position of the player
+    public Vector2Int currentPos;// { get; private set; } //current position of the player
     [Range(0.5f, 1f)] public float fadeDuration { get; private set; } //fade duration
-    [SerializeField] private List<Transform> pos; //list of available positions
+    [SerializeField] List<Transform> pos; //list of available positions
+    public Image backButton;
 
-    private Ray ray;
-    private Vector2Int lastPos = new Vector2Int(0 ,-1);
-    private TeleportType lastTeleportType;
-    private Coroutine movingCoroutine;
-    private FadeController Fc;
+    Ray ray;
+    Vector2Int lastPos = new Vector2Int(0 ,-1);
+    TeleportType lastTeleportType;
+    Coroutine movingCoroutine;
+    FadeController Fc;
+    Player cameraPlayer => Player.instance;
 
     public Transform locRequest(Vector2Int location)
     {
@@ -86,6 +86,10 @@ public class playermanajer : MonoBehaviour
         {
             move(lastPos, lastTeleportType);
         }
+        if (cameraPlayer.buttonbottom.enter)
+        {
+            move(lastPos, lastTeleportType);
+        }
     }
 
     //other function==================================================================================>
@@ -125,6 +129,7 @@ public class playermanajer : MonoBehaviour
 
     IEnumerator Walk (Transform target)
     {
+        backButton.enabled = false;
         while (Vector3.Distance(player.transform.position, target.position) > 0.01f || 
             Quaternion.Angle(player.transform.rotation, target.rotation) > 0.01f)
         {
@@ -132,6 +137,7 @@ public class playermanajer : MonoBehaviour
             player.transform.rotation = Quaternion.Lerp(player.transform.rotation, target.rotation, Time.deltaTime * Movespeed);
             yield return null;
         }
+        backButton.enabled = true;
     }
 
     IEnumerator Teleport(Transform target)

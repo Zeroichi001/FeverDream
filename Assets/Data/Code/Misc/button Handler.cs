@@ -65,6 +65,7 @@ public class buttonHandler : MonoBehaviour,
 
     IEnumerator entering()
     {
+        Debug.Log("enter");
         enter = true;
         //Debug.Log("enter");
         yield return new WaitForEndOfFrame();

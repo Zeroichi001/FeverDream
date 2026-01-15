@@ -7156,12 +7156,14 @@ MonoBehaviour:
   Movespeed: 6
   raycastEnabled: 1
   player: {fileID: 760925695}
+  currentPos: {x: 0, y: 0}
   pos:
   - {fileID: 1640154495}
   - {fileID: 437049078}
   - {fileID: 1973853433}
   - {fileID: 2073615213}
   - {fileID: 1588169747}
+  backButton: {fileID: 901117673}
 --- !u!114 &1396590054
 MonoBehaviour:
   m_ObjectHideFlags: 0
