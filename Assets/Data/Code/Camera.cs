@@ -12,7 +12,12 @@ public class Player : MonoBehaviour
     public GameObject flashlight; //reference to flashlight
     public static Player instance;
 
-    [HideInInspector] public Coroutine camCourotine; //camera method
+    public Coroutine camCourotine { get; private set; } //camera method
+
+    public List<Quaternion> rotation { get; private set; }
+    public int currentRot { get; private set; }
+
+    public cameramethod currentCamMethod { get; private set; }
 
     public buttonHandler buttonbottom;
     public buttonHandler buttonleft;
@@ -71,12 +76,15 @@ public class Player : MonoBehaviour
         {
             case cameramethod.swipe:
                 camCourotine = StartCoroutine(Swipecam((MethodParam)param));
+                currentCamMethod = cameramethod.swipe;
                 break;
             case cameramethod.freelook:
                 camCourotine = StartCoroutine(FreeCam((MethodParam)param));
+                currentCamMethod = cameramethod.freelook;
                 break;
             case cameramethod.flashligt:
                 camCourotine = StartCoroutine(Flashlight((MethodParam)param));
+                currentCamMethod = cameramethod.flashligt;
                 break;
         }
     }
@@ -108,56 +116,56 @@ public class Player : MonoBehaviour
 
     IEnumerator Swipecam(MethodParam param)
     {
-        List<Quaternion> rotation = new List<Quaternion>();
+        rotation?.Clear();
+        rotation = new List<Quaternion>();
         foreach (var rotate in param.LookEuler)
         {
             rotation.Add(Quaternion.Euler(rotate));
         }
 
         int last;
-        int current;
 
         if (param.lastLook == -1)
         {
-            current = param.lookDefault;
+            currentRot = param.lookDefault;
         } else
         {
-            current = param.lastLook;
+            currentRot = param.lastLook;
         }
 
-        while (Quaternion.Angle(transform.localRotation, rotation[current]) > 0.01f)
+        while (Quaternion.Angle(transform.localRotation, rotation[currentRot]) > 0.01f)
         {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[current], Time.deltaTime * cameraSpeed);
+            transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[currentRot], Time.deltaTime * cameraSpeed);
             yield return null;
         }
 
-        last = current;
+        last = currentRot;
 
         while (true)
         {
             if (buttonleft.enter)
             {
-                if (current > 0)
+                if (currentRot > 0)
                 {
-                    current--;
+                    currentRot--;
                 }
             }
             if (buttonright.enter)
             {
-                if (current < (rotation.Count - 1))
+                if (currentRot < (rotation.Count - 1))
                 {
-                    current++;
+                    currentRot++;
                 }
             }
 
-            if (current != last)
+            if (currentRot != last)
             {
-                while (Quaternion.Angle(transform.localRotation, rotation[current]) > 0.01f)
+                while (Quaternion.Angle(transform.localRotation, rotation[currentRot]) > 0.01f)
                 {
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[current], Time.deltaTime * cameraSpeed);
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[currentRot], Time.deltaTime * cameraSpeed);
                     yield return null;
                 }
-                last = current;
+                last = currentRot;
             }
 
             yield return null;

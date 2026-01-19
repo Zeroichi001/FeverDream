@@ -18,8 +18,8 @@ public class playermanajer : MonoBehaviour
 
     public Vector2Int currentPos;// { get; private set; } //current position of the player
     [Range(0.5f, 1f)] public float fadeDuration { get; private set; } //fade duration
+    public bool moving { get; private set; }
     [SerializeField] List<Transform> pos; //list of available positions
-    public Image backButton;
 
     Ray ray;
     Vector2Int lastPos = new Vector2Int(0 ,-1);
@@ -129,7 +129,7 @@ public class playermanajer : MonoBehaviour
 
     IEnumerator Walk (Transform target)
     {
-        backButton.enabled = false;
+        moving = true;
         while (Vector3.Distance(player.transform.position, target.position) > 0.01f || 
             Quaternion.Angle(player.transform.rotation, target.rotation) > 0.01f)
         {
@@ -137,11 +137,12 @@ public class playermanajer : MonoBehaviour
             player.transform.rotation = Quaternion.Lerp(player.transform.rotation, target.rotation, Time.deltaTime * Movespeed);
             yield return null;
         }
-        backButton.enabled = true;
+        moving = false;
     }
 
     IEnumerator Teleport(Transform target)
     {
+        moving = true;
         bool paused = true;
         yield return StartCoroutine(Fc.FadeIn(fadeDuration, () =>
         {
@@ -153,6 +154,7 @@ public class playermanajer : MonoBehaviour
         player.transform.position = target.position;
         player.transform.rotation = target.rotation;
         yield return StartCoroutine(Fc.FadeOut(fadeDuration));
+        moving = false;
     }
 
     void MoveBack()
