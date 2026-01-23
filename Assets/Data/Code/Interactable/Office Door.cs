@@ -55,7 +55,8 @@ public class OfficeDoor : MonoBehaviour
             if (peek == null)
             {
                 peek = StartCoroutine(Peeking());
-                player.SwitchMethod(cameramethod.flashligt, MethodParam.Default);
+                player.SwitchMethod(cameramethod.flashligt, Parameter.Default);
+                hover.enabled = false;
             }
             if (close != null)
             {
@@ -70,10 +71,8 @@ public class OfficeDoor : MonoBehaviour
                 StopCoroutine(peek);
                 peek = null;
             }
-            if (close == null)
-            {
-                close = StartCoroutine(AutoClose());
-            }
+            close??= StartCoroutine(AutoClose());
+            player.flashlight.SetActive(false);
         }
     }
 
@@ -83,7 +82,6 @@ public class OfficeDoor : MonoBehaviour
         Quaternion open = Quaternion.Euler(0, 40f, 0);
         Quaternion close = Quaternion.Euler(0, 0, 0);
         float doorSpeed = 5f;
-        //player.SwitchMethod(cameramethod.flashligt, MethodParam.Default);
 
         while (pm.currentPos.x == targetPos.x)
         {
@@ -91,11 +89,16 @@ public class OfficeDoor : MonoBehaviour
             {
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, close, Time.deltaTime * doorSpeed);
                 pm.move(new Vector2Int(targetPos.x, 0), playermanajer.TeleportType.Walk);
+                player.sharedParam.state.isOpen = false;
             }
             else
             {
                 transform.localRotation = Quaternion.Slerp(transform.localRotation, open, Time.deltaTime * doorSpeed);
                 pm.move(new Vector2Int(targetPos.x, -1), playermanajer.TeleportType.Walk);
+                if (Quaternion.Angle(transform.localRotation, open) < 0.01f)
+                {
+                    player.sharedParam.state.isOpen = true;
+                }
             }
             yield return null;
         }
@@ -123,6 +126,7 @@ public class OfficeDoor : MonoBehaviour
             transform.localRotation = Quaternion.Slerp(transform.localRotation, close, Time.deltaTime * doorSpeed);
             yield return null;
         }
+        hover.enabled = true;
     }
 
     //other function================================================================================>

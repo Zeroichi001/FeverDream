@@ -33,15 +33,15 @@ public class CanvasHandler : MonoBehaviour
 
     void swipeCam()
     {
-        if (last == plyr.currentRot) return;
+        if (last == plyr.sharedParam.state.currentRot) return;
         
-        last = plyr.currentRot;
+        last = plyr.sharedParam.state.currentRot;
 
-        if (plyr.currentRot == plyr.rotation.Count -1)
+        if (plyr.sharedParam.state.currentRot == plyr.sharedParam.var.LookEuler.Count -1)
         {
             buttonleft.enabled = true;
             buttonRight.enabled = false;
-        }else if (plyr.currentRot == 0)
+        }else if (plyr.sharedParam.state.currentRot == 0)
         {
             buttonleft.enabled = false;
             buttonRight.enabled = true;

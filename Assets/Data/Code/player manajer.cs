@@ -74,7 +74,7 @@ public class playermanajer : MonoBehaviour
         controller();
     }
 
-    //main function==================================================================================>
+    #region Main Functions
 
     /// <summary>
     /// player controller
@@ -91,9 +91,9 @@ public class playermanajer : MonoBehaviour
             move(lastPos, lastTeleportType);
         }
     }
+    #endregion
 
-    //other function==================================================================================>
-
+    #region Other functions
     /// <summary>
     /// move request for the player
     /// </summary>
@@ -168,4 +168,5 @@ public class playermanajer : MonoBehaviour
             move(new Vector2Int(0, -1), TeleportType.Fade);
         }
     }
+    #endregion
 }

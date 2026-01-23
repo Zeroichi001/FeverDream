@@ -13,11 +13,8 @@ public class Player : MonoBehaviour
     public static Player instance;
 
     public Coroutine camCourotine { get; private set; } //camera method
-
-    public List<Quaternion> rotation { get; private set; }
-    public int currentRot { get; private set; }
-
     public cameramethod currentCamMethod { get; private set; }
+    public Parameter sharedParam;
 
     public buttonHandler buttonbottom;
     public buttonHandler buttonleft;
@@ -35,18 +32,44 @@ public class Player : MonoBehaviour
         flashligt
     }
 
-    public struct MethodParam
+    public class Parameter
     {
-        public List<Vector3> LookEuler;
-        public int lookDefault;
-        public int lastLook;
-        public float maxYaw;
-        public float maxPitch;
+        public State state = new State();
+        public Var var = new Var();
 
-        public static MethodParam Default => new MethodParam
+        public class State
         {
-            LookEuler = new List<Vector3>()
+            //Swipe state
+            public int currentRot;
+
+            //flashlight state
+            public bool isOpen;
+        }
+
+        public struct Var
+        {
+            //Swipe var
+            public List<Vector3> LookEuler;
+            public int lookDefault;
+            public int lastLook;
+
+            //freelook var
+            public float maxYaw;
+            public float maxPitch;
+        }
+
+        public static Parameter Default => new Parameter
+        {
+            var = new Var
+            {
+                LookEuler = new List<Vector3>(),
+            }
         };
+
+        public void resetState()
+        {
+            
+        }
     }
 
     private void Awake()
@@ -60,7 +83,7 @@ public class Player : MonoBehaviour
         
     }
 
-    //main function==================================================================================>
+    #region Main Functions
 
     public void SwitchMethod(cameramethod method, object param = null)
     {
@@ -75,15 +98,15 @@ public class Player : MonoBehaviour
         switch(method)
         {
             case cameramethod.swipe:
-                camCourotine = StartCoroutine(Swipecam((MethodParam)param));
+                camCourotine = StartCoroutine(Swipecam((Parameter)param));
                 currentCamMethod = cameramethod.swipe;
                 break;
             case cameramethod.freelook:
-                camCourotine = StartCoroutine(FreeCam((MethodParam)param));
+                camCourotine = StartCoroutine(FreeCam((Parameter)param));
                 currentCamMethod = cameramethod.freelook;
                 break;
             case cameramethod.flashligt:
-                camCourotine = StartCoroutine(Flashlight((MethodParam)param));
+                camCourotine = StartCoroutine(Flashlight((Parameter)param));
                 currentCamMethod = cameramethod.flashligt;
                 break;
         }
@@ -99,11 +122,12 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator Flashlight(MethodParam param)
+    IEnumerator Flashlight(Parameter param)
     {
+        sharedParam = param;
         while (true)
         {
-            if (buttonbottom.hover)
+            if (param.state.isOpen)
             {
                 flashlight.SetActive(true);
             } else
@@ -114,67 +138,43 @@ public class Player : MonoBehaviour
         }
     }
 
-    IEnumerator Swipecam(MethodParam param)
+    IEnumerator Swipecam(Parameter param)
     {
-        rotation?.Clear();
-        rotation = new List<Quaternion>();
-        foreach (var rotate in param.LookEuler)
+        sharedParam = param;
+
+        List<Quaternion> rotation = new List<Quaternion>();
+        foreach (var rotate in param.var.LookEuler)
         {
             rotation.Add(Quaternion.Euler(rotate));
         }
 
-        int last;
+        int last = -1;
 
-        if (param.lastLook == -1)
-        {
-            currentRot = param.lookDefault;
-        } else
-        {
-            currentRot = param.lastLook;
-        }
-
-        while (Quaternion.Angle(transform.localRotation, rotation[currentRot]) > 0.01f)
-        {
-            transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[currentRot], Time.deltaTime * cameraSpeed);
-            yield return null;
-        }
-
-        last = currentRot;
+        param.state.currentRot = param.var.lastLook == -1
+            ? param.var.lookDefault
+            : param.var.lastLook;
 
         while (true)
         {
-            if (buttonleft.enter)
-            {
-                if (currentRot > 0)
-                {
-                    currentRot--;
-                }
-            }
-            if (buttonright.enter)
-            {
-                if (currentRot < (rotation.Count - 1))
-                {
-                    currentRot++;
-                }
-            }
+            if (buttonleft.enter && param.state.currentRot > 0) param.state.currentRot--;
+            if (buttonright.enter && param.state.currentRot < (rotation.Count - 1)) param.state.currentRot++;
 
-            if (currentRot != last)
+            if (param.state.currentRot != last)
             {
-                while (Quaternion.Angle(transform.localRotation, rotation[currentRot]) > 0.01f)
+                while (Quaternion.Angle(transform.localRotation, rotation[param.state.currentRot]) > 0.01f)
                 {
-                    transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[currentRot], Time.deltaTime * cameraSpeed);
+                    transform.localRotation = Quaternion.Slerp(transform.localRotation, rotation[param.state.currentRot], Time.deltaTime * cameraSpeed);
                     yield return null;
                 }
-                last = currentRot;
+                last = param.state.currentRot;
             }
-
             yield return null;
         }
-
     }
 
-    IEnumerator FreeCam (MethodParam param)
+    IEnumerator FreeCam (Parameter param)
     {
+        sharedParam = param;
         while (true)
         {
             // Ambil posisi kursor relatif terhadap lebar & tinggi layar (0 - 1)
@@ -186,8 +186,8 @@ public class Player : MonoBehaviour
             float normalizedY = Mathf.Clamp((mouseY - 0.5f) * 2f, -1f, 1f);
 
             // Tentukan target rotasi berdasarkan posisi kursor
-            targetYaw = normalizedX * param.maxYaw;
-            targetPitch = -normalizedY * param.maxPitch;
+            targetYaw = normalizedX * param.var.maxYaw;
+            targetPitch = -normalizedY * param.var.maxPitch;
 
             //Debug.Log(new Vector2(normalizedX, normalizedY));
             // Smooth rotasi (biar gak patah-patah)
@@ -208,7 +208,5 @@ public class Player : MonoBehaviour
 
         flashlight.transform.LookAt(targetPoint);
     }
-
-    //other function================================================================================>
-
+    #endregion
 }

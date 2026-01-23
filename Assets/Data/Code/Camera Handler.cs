@@ -43,14 +43,15 @@ public class CameraHandler : MonoBehaviour
             switch (location)
             {
                 case 0:
-                    player.SwitchMethod(cameramethod.swipe,
-                new MethodParam
+                Parameter param = new Parameter();
+                param.var = new Parameter.Var()
                 {
                     LookEuler = office,
                     lookDefault = 1,
-                    lastLook = lastState
-                }
-                );
+                    lastLook = lastState,
+                };
+
+                player.SwitchMethod(cameramethod.swipe, param);
                     break;
                 default:
                     resetCamera();
