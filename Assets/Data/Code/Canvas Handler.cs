@@ -15,7 +15,7 @@ public class CanvasHandler : MonoBehaviour
 
     private void Update()
     {
-        if (pm.moving || pm.currentPos.x == 0)
+        if (pm.currentPos.x == 0)
         {
             buttonBottom.enabled = false;
         } else buttonBottom.enabled = true;

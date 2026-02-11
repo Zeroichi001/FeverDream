@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
 
     float targetYaw; //save target yaw
     float targetPitch; //save target pitch
-    playermanajer pm; //reference to player manager
+    playermanajer pm => playermanajer.instance; //reference to player manager
     Camera cam => Camera.main; //reference to main camera
 
     public enum cameramethod
@@ -75,7 +75,6 @@ public class Player : MonoBehaviour
     private void Awake()
     {
         instance = this;
-        pm = GameObject.FindGameObjectWithTag("Player Manajer").GetComponent<playermanajer>();
     }
 
     private void Start()

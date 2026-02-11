@@ -4,10 +4,9 @@
 TagManager:
   serializedVersion: 3
   tags:
-  - Player Manajer
-  - Door
-  - Monitor
   - Canvas
+  - Manajer
+  - Handler
   layers:
   - Default
   - TransparentFX

@@ -2,28 +2,34 @@
 using UnityEngine.UI;
 using System.Collections;
 using System;
+using Unity.Mathematics;
 
 public class FadeController : MonoBehaviour
 {
+    CanvasUIManager canvas;
+    [Range(0, 1)] float Alpha;
     public Color BaseColor;
     private Image image;
 
     private void Awake()
     {
         image = GetComponent<Image>();
+        canvas = gameObject.GetComponentInParent<CanvasUIManager>();
     }
 
     private void Update()
     {
         // Jaga RGB tetap sama, alpha tidak disentuh
         Color c = image.color;
-        if (c.r != BaseColor.r || c.g != BaseColor.g || c.b != BaseColor.b)
+        if (c.r != BaseColor.r || c.g != BaseColor.g || c.b != BaseColor.b || c.a != canvas.fade)
         {
             c.r = BaseColor.r;
             c.g = BaseColor.g;
             c.b = BaseColor.b;
+            c.a = canvas.fade;
             image.color = c;
         }
+
     }
 
     public IEnumerator FadeIn(float duration, Action onComplete)
