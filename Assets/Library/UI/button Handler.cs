@@ -15,14 +15,22 @@ public class buttonHandler : MonoBehaviour,
     public bool Key { get; private set; }
     public bool keyDown { get; private set; }
 
+    Image image => GetComponent<Image>();
+
     bool isPressed;
     bool isInside;
+
+    [HideInInspector] public bool Active;
 
     void Start()
     {
         if(gameObject.GetComponent<Button>() == null)
         {
             Debug.LogWarning("this gameobject doesn't have button component");
+        }
+        if (image == null)
+        {
+            Debug.LogWarning("this gameobject doesn't have Image component");
         }
     }
 
@@ -75,6 +83,17 @@ public class buttonHandler : MonoBehaviour,
         if (!hover)
         {
             Key = false;
+        }
+    }
+
+    private void Update()
+    {
+        if(Active)
+        {
+            image.enabled = true;
+        } else
+        {
+            image.enabled = false;
         }
     }
 }
