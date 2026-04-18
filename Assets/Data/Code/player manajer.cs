@@ -12,7 +12,7 @@ public class playermanajer : MonoBehaviour
     public float Movespeed = 10f;
     public bool raycastEnabled = true;
     public GameObject player; //reference to player
-
+    
     [HideInInspector] public Camera cam => Camera.main;
     [HideInInspector] public RaycastHit hit;
 
@@ -21,7 +21,6 @@ public class playermanajer : MonoBehaviour
     public bool moving { get; private set; }
     [SerializeField] List<Transform> pos; //list of available positions
 
-    Ray ray;
     Vector2Int lastPos = new Vector2Int(0 ,-1);
     TeleportType lastTeleportType;
     Coroutine movingCoroutine;
@@ -66,7 +65,7 @@ public class playermanajer : MonoBehaviour
     private void Update()
     {
         if (!Application.isFocused) return;
-        ray = cam.ScreenPointToRay(Input.mousePosition);
+        Ray ray = cam.ScreenPointToRay(Input.mousePosition);
         if (raycastEnabled)
         {
             Physics.Raycast(ray, out hit, 30f);

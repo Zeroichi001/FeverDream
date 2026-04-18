@@ -5270,6 +5270,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6484ef92d2b2de6439693a08800ed5df, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DoorPeekHandler
+  open: {fileID: 0}
+  close: {fileID: 0}
+  duration: 1
+  door: {fileID: 0}
+  openRot: {x: 0, y: 0, z: 0}
+  closeRot: {x: 0, y: 0, z: 0}
+  unlocked: {x: 0, y: 0, z: 0}
+  Occupied: 0
+  isOpen: 0
+  State: 0
 --- !u!1 &447429765
 GameObject:
   m_ObjectHideFlags: 0
@@ -5882,6 +5892,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3b9cfa9538eca3a4ba2d7d0efeb6fcc5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 931057140}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 3b9cfa9538eca3a4ba2d7d0efeb6fcc5, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 931057141}
     - targetCorrespondingSourceObject: {fileID: -3621191889037297784, guid: 3b9cfa9538eca3a4ba2d7d0efeb6fcc5, type: 3}
       insertIndex: -1
       addedObject: {fileID: 250975225}
@@ -6151,9 +6164,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c24d86deb04fa944a1a015551c0d90e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerMain
-  cam: {fileID: 0}
   flashLight: {fileID: 2036477205}
   canvas: {fileID: 1547012399}
+  raycastEnabled: 1
 --- !u!1 &837013367 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: a0bdafccbeafcf34cb68cc6ffb0b44a5, type: 3}
@@ -6611,6 +6624,18 @@ MonoBehaviour:
   precomputeOutline: 0
   bakeKeys: []
   bakeValues: []
+--- !u!114 &931057141
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 931057137}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d56c559dfad894eba6ae9b910ef714, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SecurityCamHandler
 --- !u!1001 &954388907
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6695,6 +6720,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1121385367}
     - targetCorrespondingSourceObject: {fileID: -8068073526183931155, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
       insertIndex: -1
       addedObject: {fileID: 80138009}
@@ -7083,6 +7111,13 @@ MonoBehaviour:
   Left: {fileID: 954452135}
   Right: {fileID: 1371419858}
   Back: {fileID: 901117675}
+  interactable:
+  - {fileID: 931057137}
+  - {fileID: 452005275}
+  - {fileID: 1121385366}
+  rotation:
+  - {x: 0, y: 0, z: 0}
+  - {x: 0, y: 1.6, z: 0}
   duration: 1
 --- !u!1 &1107207761
 GameObject:
@@ -7115,6 +7150,33 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1075602684}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1121385366 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
+  m_PrefabInstance: {fileID: 954388907}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1121385367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121385366}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6484ef92d2b2de6439693a08800ed5df, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorPeekHandler
+  open: {fileID: 437049078}
+  close: {fileID: 2120902049}
+  duration: 1
+  door: {fileID: 80138001}
+  openRot: {x: 0, y: 45, z: 0}
+  closeRot: {x: 0, y: 0, z: 0}
+  unlocked: {x: 0, y: 10, z: 0}
+  Occupied: 0
+  isOpen: 0
+  State: 0
 --- !u!1 &1137660211
 GameObject:
   m_ObjectHideFlags: 0
@@ -7924,7 +7986,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1396590051}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: be7ab600a128c4c4fb0f625a0a70b06c, type: 3}
   m_Name: 
@@ -7940,7 +8002,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1396590051}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 94d03c70815ec9e40885e09d2927a217, type: 3}
   m_Name: 
