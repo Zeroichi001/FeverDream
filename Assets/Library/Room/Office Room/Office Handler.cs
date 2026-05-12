@@ -71,6 +71,11 @@ public class OfficeHandler : MonoBehaviour
                     StartCoroutine(Cam(true));
                     RequestSwitchState(OfficeState.Cam);
                     break;
+                case 2:
+                    StopAllCoroutines();
+                    DoorHandler.enabled = true;
+                    disableButton();
+                    break;
             }
         }
 

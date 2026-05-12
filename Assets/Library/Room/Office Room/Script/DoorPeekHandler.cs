@@ -7,57 +7,52 @@ public class DoorHandler : MonoBehaviour
 {
     [SerializeField] private Transform open, close;
     [SerializeField] float duration = 5f;
-    [SerializeField] GameObject door;
     [SerializeField] Vector3 openRot, closeRot, unlocked;
 
     Player player => Player.instance;
+    DoorEvent Head; //Head Script
 
-    quaternion openRotQ, closeRotQ, unlockedRotQ;
+    quaternion openRotQ, closeRotQ;
     public bool Occupied, isOpen;
-    public bool State;
+    public bool State; //if true is mean enemy was occupied the door.
 
     private void Awake()
     {
-        //if (door == null) Debug.LogError("Door GameObject not assigned");
-        //if (open == null || close == null) Debug.LogError("Transform var not assigned");
+        if (open == null || close == null) Debug.LogError("Transform var not assigned");
+        Head = GetComponent<DoorEvent>();
+
+        openRotQ = quaternion.Euler(openRot);
+        closeRotQ = quaternion.Euler(closeRot);
+
     }
 
     private void Update()
     {
-        if (!State)
-        {
-            if (Occupied)
-            {
-                doorHandler();
-            } else if (isOpen)
-            {
-                StartCoroutine(autoClose());
-            }
-        } else
-        {
-            door.transform.localRotation = Quaternion.Lerp(door.transform.localRotation, unlockedRotQ, Time.deltaTime * duration);
-            if (Quaternion.Angle(door.transform.localRotation, unlockedRotQ) < 0.01f) isOpen = true;
-        }
+        doorHandler();
     }
 
     void doorHandler()
     {
-        door.transform.localRotation = Quaternion.Lerp(door.transform.localRotation, isOpen ? openRotQ : closeRotQ, Time.deltaTime * duration);
+        Head.door.transform.localRotation = Quaternion.Lerp(Head.door.transform.localRotation, isOpen ? openRotQ : closeRotQ, Time.deltaTime * duration);
 
-        if (Quaternion.Angle(door.transform.localRotation, closeRotQ) < 0.01f) isOpen = false;
-        else if (Quaternion.Angle(door.transform.localRotation, openRotQ) < 0.01f) isOpen = true;
+        if (Quaternion.Angle(Head.door.transform.localRotation, closeRotQ) < 0.01f) isOpen = false;
+        else if (Quaternion.Angle(Head.door.transform.localRotation, openRotQ) < 0.01f) isOpen = true;
 
         player.transform.position = Vector3.Lerp(player.transform.position, isOpen ? open.position : close.position, Time.deltaTime * duration);
         player.transform.rotation = Quaternion.Lerp(player.transform.rotation, isOpen ? open.rotation : close.rotation, Time.deltaTime * duration);
     }
 
-    IEnumerator autoClose()
+    private void OnEnable()
     {
-        while (Quaternion.Angle(door.transform.localRotation, closeRotQ) < 0.01f)
+        if (Head.Occupied)
         {
-            door.transform.localRotation = Quaternion.Lerp(door.transform.localRotation, closeRotQ, Time.deltaTime * duration);
-            yield return null;
+            Head.call();
+            this.enabled = false;
         }
-        isOpen = false;
+        else return;
+    }
+    private void OnDisable()
+    {
+        Head.StartCoroutine(Head.autoClose(duration));
     }
 }
