@@ -5234,7 +5234,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 437049078}
-  - component: {fileID: 437049079}
   m_Layer: 0
   m_Name: OfficePeek pos
   m_TagString: Untagged
@@ -5258,27 +5257,6 @@ Transform:
   - {fileID: 2120902049}
   m_Father: {fileID: 1075602684}
   m_LocalEulerAnglesHint: {x: -5, y: 200, z: -10}
---- !u!114 &437049079
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 437049077}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6484ef92d2b2de6439693a08800ed5df, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DoorPeekHandler
-  open: {fileID: 0}
-  close: {fileID: 0}
-  duration: 1
-  openRot: {x: 0, y: 0, z: 0}
-  closeRot: {x: 0, y: 0, z: 0}
-  unlocked: {x: 0, y: 0, z: 0}
-  Occupied: 0
-  isOpen: 0
-  State: 0
 --- !u!1 &447429765
 GameObject:
   m_ObjectHideFlags: 0
@@ -6721,6 +6699,9 @@ PrefabInstance:
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
       insertIndex: -1
+      addedObject: {fileID: 1121385369}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
+      insertIndex: -1
       addedObject: {fileID: 1121385368}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 116acbadfcc6ba04691b2ba12418c049, type: 3}
       insertIndex: -1
@@ -7105,7 +7086,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OfficeHandler
   localHandler: {fileID: 1640154496}
   CamHandler: {fileID: 1969205604}
-  DoorHandler: {fileID: 437049079}
+  DoorHandler: {fileID: 1121385367}
   CurrentState: 0
   localTarget: {fileID: 1640154495}
   camTarget: {fileID: 1969205603}
@@ -7114,8 +7095,8 @@ MonoBehaviour:
   Right: {fileID: 1371419858}
   Back: {fileID: 901117675}
   interactable:
-  - {fileID: 931057137}
   - {fileID: 452005275}
+  - {fileID: 931057137}
   - {fileID: 1121385366}
   rotation:
   - {x: 0, y: 0, z: 0}
@@ -7171,13 +7152,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorPeekHandler
   open: {fileID: 437049078}
   close: {fileID: 2120902049}
-  duration: 1
+  duration: 0.3
   openRot: {x: 0, y: 45, z: 0}
   closeRot: {x: 0, y: 0, z: 0}
-  unlocked: {x: 0, y: 10, z: 0}
-  Occupied: 0
   isOpen: 0
-  State: 0
 --- !u!114 &1121385368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7193,6 +7171,27 @@ MonoBehaviour:
   door: {fileID: 80138001}
   unlocked: {x: 0, y: 10, z: 0}
   Occupied: 0
+--- !u!65 &1121385369
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1121385366}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.5, y: 4.4, z: 2.4}
+  m_Center: {x: 0, y: 2, z: 0}
 --- !u!1 &1137660211
 GameObject:
   m_ObjectHideFlags: 0

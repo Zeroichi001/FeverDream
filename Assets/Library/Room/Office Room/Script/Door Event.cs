@@ -43,6 +43,8 @@ public class DoorEvent : MonoBehaviour
 
     public IEnumerator autoClose(float duration)
     {
+        if (!Application.isPlaying) yield break;
+
         Quaternion closeRotQ = new Quaternion(0, 0, 0, 0);
         while (Quaternion.Angle(door.transform.localRotation, closeRotQ) < 0.01f)
         {

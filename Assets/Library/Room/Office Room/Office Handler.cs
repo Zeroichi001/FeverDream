@@ -8,7 +8,9 @@ using static UnityEngine.UI.Image;
 public class OfficeHandler : MonoBehaviour
 {
     [Header("Reference")]
-    [SerializeField] MonoBehaviour localHandler, CamHandler, DoorHandler;
+    [SerializeField] LocalCamHandler localHandler;
+    [SerializeField] SecurityCamHandler CamHandler;
+    [SerializeField] DoorHandler DoorHandler;
     [SerializeField] OfficeState CurrentState; //this will be hided in future
     [SerializeField] Transform localTarget, camTarget, doorTarget;
     [SerializeField] buttonHandler Left, Right, Back;
@@ -66,14 +68,14 @@ public class OfficeHandler : MonoBehaviour
         {
             switch (interactable.FindIndex(x => x == player.hit.collider?.gameObject))
             {
-                case 0:
+                case 1:
                     StopAllCoroutines();
                     StartCoroutine(Cam(true));
                     RequestSwitchState(OfficeState.Cam);
                     break;
                 case 2:
                     StopAllCoroutines();
-                    DoorHandler.enabled = true;
+                    RequestSwitchState(OfficeState.Door);
                     disableButton();
                     break;
             }
