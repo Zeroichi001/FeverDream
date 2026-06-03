@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -9,12 +8,12 @@ public class DoorHandler : MonoBehaviour
     [SerializeField] float duration = 5f;
     [SerializeField] Vector3 openRot, closeRot;
 
-    Player player => Player.instance;
+    PlayerMain player => PlayerMain.instance;
     DoorEvent Head; //Head Script
 
-    quaternion openRotQ, closeRotQ;
-    public bool isOpen;
+    Coroutine Coroutine;
     static bool isQuitting;
+    bool isOpen;
 
     [RuntimeInitializeOnLoadMethod]
     static void RunOnStart()
@@ -27,26 +26,49 @@ public class DoorHandler : MonoBehaviour
     {
         if (open == null || close == null) Debug.LogError("Transform var not assigned");
         Head = GetComponent<DoorEvent>();
-
-        openRotQ = quaternion.Euler(openRot);
-        closeRotQ = quaternion.Euler(closeRot);
-
     }
 
     private void Update()
     {
-        doorHandler();
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (isOpen)
+            {
+                if (Coroutine != null)
+                {
+                    StopCoroutine(Coroutine);
+                }
+                Coroutine = StartCoroutine(doorHandler(false));
+                isOpen = false;
+            }
+        } else if (!isOpen)
+        {
+            if (Coroutine != null)
+            {
+                StopCoroutine(Coroutine);
+            }
+            Coroutine = StartCoroutine(doorHandler(true));
+            isOpen = true;
+        }
     }
-
-    void doorHandler()
+    IEnumerator doorHandler(bool isOpen)
     {
-        Head.door.transform.localRotation = Quaternion.Lerp(Head.door.transform.localRotation, isOpen ? openRotQ : closeRotQ, Time.deltaTime / duration);
+        quaternion openRotQ = quaternion.Euler(openRot);
+        quaternion closeRotQ = quaternion.Euler(closeRot);
 
-        if (Quaternion.Angle(Head.door.transform.localRotation, closeRotQ) < 0.01f) isOpen = false;
-        else if (Quaternion.Angle(Head.door.transform.localRotation, openRotQ) < 0.01f) isOpen = true;
+        float t = 0f;
+        while (t < duration)
+        {
+            t += Time.deltaTime * duration;
 
-        player.transform.position = Vector3.Lerp(player.transform.position, isOpen ? open.position : close.position, Time.deltaTime / duration);
-        player.transform.rotation = Quaternion.Lerp(player.transform.rotation, isOpen ? open.rotation : close.rotation, Time.deltaTime / duration);
+            Head.door.transform.localRotation = Quaternion.Lerp(Head.door.transform.localRotation, isOpen ? openRotQ : closeRotQ, Time.deltaTime / duration);
+
+            player.transform.position = Vector3.Lerp(player.transform.position, isOpen ? open.position : close.position, Time.deltaTime / duration);
+            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, isOpen ? open.rotation : close.rotation, Time.deltaTime / duration);
+
+            yield return null;
+        }
+        Coroutine = null;
     }
 
     private void OnEnable()
@@ -56,11 +78,13 @@ public class DoorHandler : MonoBehaviour
             Head.call();
             this.enabled = false;
         }
-        else return;
+        else Coroutine = StartCoroutine(doorHandler(true)); isOpen = true;
     }
     private void OnDisable()
     {
         if (isQuitting) return;
+        StopAllCoroutines();
+        Coroutine = null;
         StartCoroutine(Head.autoClose(duration));
     }
 }

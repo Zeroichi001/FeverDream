@@ -43,12 +43,13 @@ public class DoorEvent : MonoBehaviour
 
     public IEnumerator autoClose(float duration)
     {
-        if (!Application.isPlaying) yield break;
-
-        Quaternion closeRotQ = new Quaternion(0, 0, 0, 0);
-        while (Quaternion.Angle(door.transform.localRotation, closeRotQ) < 0.01f)
+        Vector3 rot = new Vector3(0, 0, 0);
+        Quaternion closeRotQ = Quaternion.Euler(rot);
+        float t = 0f;
+        while (t < duration)
         {
-            door.transform.localRotation = Quaternion.Lerp(door.transform.localRotation, closeRotQ, Time.deltaTime * duration);
+            t += Time.deltaTime;
+            door.transform.localRotation = Quaternion.Lerp(door.transform.localRotation, closeRotQ, t / duration);
             yield return null;
         }
     }

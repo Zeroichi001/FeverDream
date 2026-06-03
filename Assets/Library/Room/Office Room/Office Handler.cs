@@ -12,7 +12,7 @@ public class OfficeHandler : MonoBehaviour
     [SerializeField] SecurityCamHandler CamHandler;
     [SerializeField] DoorHandler DoorHandler;
     [SerializeField] OfficeState CurrentState; //this will be hided in future
-    [SerializeField] Transform localTarget, camTarget, doorTarget;
+    [SerializeField] Transform localTarget;
     [SerializeField] buttonHandler Left, Right, Back;
     [SerializeField] List<GameObject> interactable;
     [SerializeField] List<Vector3> rotation;
@@ -25,25 +25,6 @@ public class OfficeHandler : MonoBehaviour
     public float duration = 1f;
 
     #region Core ///Core of script///
-    public Quaternion eulerLerp(Vector3 start, Vector3 destination, Vector3 t) //this will be deleted in future
-    {
-        float x = Mathf.Lerp(start.x, destination.x, t.x) + 360f * (t.x > 1f || t.x < 0f ? t.x - math.trunc(t.x) : 0) * -1;
-        float y = Mathf.Lerp(start.y, destination.y, t.y) + 360f * (t.y > 1f || t.y < 0f ? t.y - math.trunc(t.y) : 0) * -1;
-        float z = Mathf.Lerp(start.z, destination.z, t.z) + 360f * (t.z > 1f || t.z < 0f ? t.z - math.trunc(t.z) : 0) * -1;
-
-        return Quaternion.Euler(x, y, z);
-    }
-
-    public Vector3 posLerp(Vector3 start, Vector3 destination, Vector3 t) //this will be deleted in future
-    {
-        Vector3 result = new Vector3(
-            Mathf.LerpUnclamped(start.x, destination.x, t.x),
-            Mathf.LerpUnclamped(start.y, destination.y, t.y),
-            Mathf.LerpUnclamped(start.z, destination.z, t.z)
-            );
-        return result;
-    }
-
     private void Start()
     {
         buttonHandling();
@@ -55,7 +36,6 @@ public class OfficeHandler : MonoBehaviour
         {
             StopAllCoroutines();
             StartCoroutine(Cam(true));
-            RequestSwitchState(OfficeState.Cam);
         }
 
         if (!Application.isFocused) return;
@@ -70,13 +50,12 @@ public class OfficeHandler : MonoBehaviour
             {
                 case 1:
                     StopAllCoroutines();
-                    StartCoroutine(Cam(true));
+                    //StartCoroutine(Cam(true));
                     RequestSwitchState(OfficeState.Cam);
                     break;
                 case 2:
                     StopAllCoroutines();
                     RequestSwitchState(OfficeState.Door);
-                    disableButton();
                     break;
             }
         }
@@ -84,8 +63,21 @@ public class OfficeHandler : MonoBehaviour
         if (Back.hover)
         {
             StopAllCoroutines();
-            StartCoroutine(Cam(false));
             RequestSwitchState(OfficeState.Local);
+            StartCoroutine(Cam(false));
+            //switch (CurrentState)
+            //{
+            //    case OfficeState.Cam:
+            //        StopAllCoroutines();
+            //        //StartCoroutine(Cam(false));
+            //        RequestSwitchState(OfficeState.Local);
+            //        break;
+            //    case OfficeState.Door:
+            //        StopAllCoroutines();
+            //        RequestSwitchState(OfficeState.Local);
+            //        //StartCoroutine(camRots(rotation[1]));
+            //        break;
+            //}
         }
 
         if (CurrentState == OfficeState.Local)
@@ -109,19 +101,28 @@ public class OfficeHandler : MonoBehaviour
     #region methods ///Main Method use in this Script///
     public void RequestSwitchState(OfficeState target)
     {
+        disableButton();
         localHandler.enabled = false;
         switch (target)
         {
             case OfficeState.Cam:
                 CamHandler.enabled = true;
                 DoorHandler.enabled = false;
+                localHandler.enabled = false;
                 break;
             case OfficeState.Door:
-                CamHandler.enabled = false;
                 DoorHandler.enabled = true;
+                CamHandler.enabled = false;
+                localHandler.enabled = false;
+                break;
+            case OfficeState.Local:
+                localHandler.enabled = true;
+                DoorHandler.enabled = false;
+                CamHandler.enabled = false;
                 break;
         }
         CurrentState = target;
+        buttonHandling();
     }
 
     private void disableButton()
@@ -159,28 +160,16 @@ public class OfficeHandler : MonoBehaviour
         }
     }
 
-    IEnumerator Cam(bool In)
+    IEnumerator Cam(bool In) //this thing will moved to cam handler
     {
         disableButton();
         float t = 0f;
-        if (!In)
+        while (t < duration)
         {
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                player.transform.position = Vector3.Lerp(player.transform.position, localTarget.position, t / duration);
-                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, localTarget.rotation, t / duration);
-                yield return null;
-            }
-        } else if (In)
-        {
-            while (t < duration)
-            {
-                t += Time.deltaTime;
-                player.transform.position = Vector3.Lerp(player.transform.position, camTarget.position, t / duration);
-                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, camTarget.rotation, t / duration);
-                yield return null;
-            }
+            t += Time.deltaTime * duration;
+            player.transform.position = Vector3.Lerp(player.transform.position, localTarget.position, t / duration);
+            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, localTarget.rotation, t / duration);
+            yield return null;
         }
         buttonHandling();
     }
@@ -193,35 +182,13 @@ public class OfficeHandler : MonoBehaviour
 
         while (t < duration)
         {
-            t += Time.deltaTime;
+            t += Time.deltaTime * duration;
             player.cam.transform.localRotation = Quaternion.Lerp(player.cam.transform.localRotation, rot, t / duration);
             yield return null;
         }
         buttonHandling();
     }
     #endregion  
-}
-
-[System.Serializable]
-public class curve // this will be deleted in future
-{
-    public Vector3 position(float t)
-    {
-        return new Vector3(posX.Evaluate(t), posY.Evaluate(t), posZ.Evaluate(t));
-    }
-    public Vector3 rotation(float t)
-    {
-        return new Vector3(rotX.Evaluate(t), rotY.Evaluate(t), rotZ.Evaluate(t));
-    }
-
-    public AnimationCurve posX;
-    public AnimationCurve posY;
-    public AnimationCurve posZ;
-
-    public AnimationCurve rotX;
-    public AnimationCurve rotY;
-    public AnimationCurve rotZ;
-
 }
 
 [System.Serializable]
