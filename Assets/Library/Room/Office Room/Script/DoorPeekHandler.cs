@@ -6,7 +6,10 @@ public class DoorHandler : MonoBehaviour
 {
     [SerializeField] private Transform open, close;
     [SerializeField] float duration = 5f;
+    [SerializeField] float playerDuration = 5f;
     [SerializeField] Vector3 openRot, closeRot;
+    [SerializeField] AnimationCurve doorAnimate;
+    [SerializeField] AnimationCurve playerAnimate;
 
     PlayerMain player => PlayerMain.instance;
     DoorEvent Head; //Head Script
@@ -56,18 +59,23 @@ public class DoorHandler : MonoBehaviour
         quaternion openRotQ = quaternion.Euler(openRot);
         quaternion closeRotQ = quaternion.Euler(closeRot);
 
+        Quaternion startRot = player.transform.rotation;
+        Vector3 startPos = player.transform.position;
+
         float t = 0f;
+        if (!isOpen) player.flashLight.SetActive(false);
         while (t < duration)
         {
-            t += Time.deltaTime * duration;
+            t += Time.deltaTime;
 
-            Head.door.transform.localRotation = Quaternion.Lerp(Head.door.transform.localRotation, isOpen ? openRotQ : closeRotQ, Time.deltaTime / duration);
+            Head.door.transform.localRotation = Quaternion.Lerp(Head.door.transform.localRotation, isOpen ? openRotQ : closeRotQ, doorAnimate.Evaluate(t / duration));
 
-            player.transform.position = Vector3.Lerp(player.transform.position, isOpen ? open.position : close.position, Time.deltaTime / duration);
-            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, isOpen ? open.rotation : close.rotation, Time.deltaTime / duration);
+            player.transform.position = Vector3.Lerp(startPos, isOpen ? open.position : close.position, playerAnimate.Evaluate(t / duration));
+            player.transform.rotation = Quaternion.Lerp(startRot, isOpen ? open.rotation : close.rotation, playerAnimate.Evaluate(t / duration));
 
             yield return null;
         }
+        if (isOpen) player.flashLight.SetActive(true);
         Coroutine = null;
     }
 

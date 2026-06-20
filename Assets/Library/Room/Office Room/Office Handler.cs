@@ -16,7 +16,9 @@ public class OfficeHandler : MonoBehaviour
     [SerializeField] buttonHandler Left, Right, Back;
     [SerializeField] List<GameObject> interactable;
     [SerializeField] List<Vector3> rotation;
-
+    [SerializeField] AnimationCurve local;
+    [SerializeField] AnimationCurve Rotation;
+    [SerializeField] AnimationCurve tilt;
 
     PlayerMain player => PlayerMain.instance;
     int CurRot;
@@ -85,13 +87,13 @@ public class OfficeHandler : MonoBehaviour
             if (Right.hover)
             {
                 StopAllCoroutines();
-                StartCoroutine(camRots(rotation[1]));
+                StartCoroutine(camRots(rotation[1], true));
                 CurRot = 1;
             }
             if (Left.hover)
             {
                 StopAllCoroutines();
-                StartCoroutine(camRots(rotation[0]));
+                StartCoroutine(camRots(rotation[0], false));
                 CurRot = 0;
             }
         }
@@ -164,26 +166,32 @@ public class OfficeHandler : MonoBehaviour
     {
         disableButton();
         float t = 0f;
+        Quaternion startRot = player.transform.rotation;
+        Vector3 startPos = player.transform.position;
         while (t < duration)
         {
-            t += Time.deltaTime * duration;
-            player.transform.position = Vector3.Lerp(player.transform.position, localTarget.position, t / duration);
-            player.transform.rotation = Quaternion.Lerp(player.transform.rotation, localTarget.rotation, t / duration);
+            t += Time.deltaTime;
+            player.transform.position = Vector3.Lerp(startPos, localTarget.position, local.Evaluate(t / duration));
+            player.transform.rotation = Quaternion.Lerp(startRot, localTarget.rotation, local.Evaluate(t / duration));
             yield return null;
         }
         buttonHandling();
     }
 
-    IEnumerator camRots(Vector3 target)
+    IEnumerator camRots(Vector3 target, bool right)
     {
         disableButton();
-        Quaternion rot = quaternion.Euler(target);
+        Quaternion rot = Quaternion.Euler(0 , target.y, 0);
         float t = 0f;
+        Quaternion startRot = player.cam.transform.localRotation;
 
         while (t < duration)
         {
-            t += Time.deltaTime * duration;
-            player.cam.transform.localRotation = Quaternion.Lerp(player.cam.transform.localRotation, rot, t / duration);
+            t += Time.deltaTime;
+            quaternion currentRot = Quaternion.Lerp(startRot, rot, Rotation.Evaluate(t / duration));
+            float tiltValue = (5f * (right ? 1 : -1) * tilt.Evaluate(t / duration));
+
+            player.cam.transform.localRotation = currentRot * Quaternion.Euler(0, 0, tiltValue);
             yield return null;
         }
         buttonHandling();

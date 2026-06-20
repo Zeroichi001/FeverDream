@@ -43,6 +43,7 @@ public class DoorEvent : MonoBehaviour
 
     public IEnumerator autoClose(float duration)
     {
+        PlayerMain.instance.flashLight.SetActive(false);
         Vector3 rot = new Vector3(0, 0, 0);
         Quaternion closeRotQ = Quaternion.Euler(rot);
         float t = 0f;

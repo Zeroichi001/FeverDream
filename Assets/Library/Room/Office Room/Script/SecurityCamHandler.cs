@@ -8,6 +8,7 @@ public class SecurityCamHandler : MonoBehaviour
     // every monitor and cam code will be here
 
     [SerializeField]float duration = 1f;
+    [SerializeField]AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
 
     [Header("Reference")]
     [SerializeField] Transform camTarget;
@@ -29,12 +30,15 @@ public class SecurityCamHandler : MonoBehaviour
 
     IEnumerator In()
     {
+        Quaternion startRot = player.transform.rotation;
+        Vector3 startPos = player.transform.position;
+
         float t = 0f;
         while (t<duration)
             {
                 t += Time.deltaTime;
-                player.transform.position = Vector3.Lerp(player.transform.position, camTarget.position, t / duration);
-                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, camTarget.rotation, t / duration);
+                player.transform.position = Vector3.Lerp(startPos, camTarget.position, curve.Evaluate(t / duration));
+                player.transform.rotation = Quaternion.Lerp(startRot, camTarget.rotation, curve.Evaluate(t / duration));
                 yield return null;
             }
     }

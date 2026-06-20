@@ -6593,6 +6593,30 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SecurityCamHandler
   duration: 1
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   camTarget: {fileID: 1969205603}
 --- !u!1001 &954388907
 PrefabInstance:
@@ -7076,8 +7100,89 @@ MonoBehaviour:
   - {fileID: 1121385366}
   rotation:
   - {x: 0, y: 0, z: 0}
-  - {x: 0, y: 1.6, z: 0}
-  duration: 0.8
+  - {x: 0, y: 90, z: 0}
+  local:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  Rotation:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  tilt:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0.03980458
+      outSlope: 0.03980458
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0.53445256
+    - serializedVersion: 3
+      time: 0.5
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 34
+      weightedMode: 0
+      inWeight: 0.33333334
+      outWeight: 0.33333334
+    - serializedVersion: 3
+      time: 1
+      value: 0
+      inSlope: 0.01628081
+      outSlope: 0.01628081
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.5251112
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  duration: 0.4
 --- !u!1 &1107207761
 GameObject:
   m_ObjectHideFlags: 0
@@ -7128,9 +7233,58 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DoorPeekHandler
   open: {fileID: 437049078}
   close: {fileID: 2120902049}
-  duration: 0.25
+  duration: 0.5
+  playerDuration: 0.4
   openRot: {x: 0, y: 45, z: 0}
   closeRot: {x: 0, y: 0, z: 0}
+  doorAnimate:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: Infinity
+      outSlope: 0.108155936
+      tangentMode: 1
+      weightedMode: 1
+      inWeight: 0
+      outWeight: 0.20139003
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 3.5035324
+      outSlope: 3.5035324
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.054958105
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
+  playerAnimate:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &1121385368
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9039,7 +9193,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d56c559dfad894eba6ae9b910ef714, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SecurityCamHandler
-  duration: 1
+  duration: 0.4
+  curve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   camTarget: {fileID: 1969205603}
 --- !u!1 &1973853432
 GameObject:
