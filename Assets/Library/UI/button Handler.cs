@@ -15,12 +15,13 @@ public class buttonHandler : MonoBehaviour,
     public bool Key { get; private set; }
     public bool keyDown { get; private set; }
 
-    Image image => GetComponent<Image>();
+    CanvasGroup canvasGroup => GetComponent<CanvasGroup>();
 
     bool isPressed;
     bool isInside;
 
-    [HideInInspector] public bool Active;
+    [HideInInspector] public bool Active = true;
+    [HideInInspector] public bool Muted = false;
 
     void Start()
     {
@@ -28,14 +29,15 @@ public class buttonHandler : MonoBehaviour,
         {
             Debug.LogWarning("this gameobject doesn't have button component");
         }
-        if (image == null)
+        if (canvasGroup == null)
         {
-            Debug.LogWarning("this gameobject doesn't have Image component");
+            Debug.LogWarning("this gameobject doesn't have CanvasGroup component");
         }
     }
 
     public void OnPointerDown(PointerEventData eventData)
     {
+        if (Muted) return;
         if (isPressed) return;
         isPressed = true;
         StartCoroutine(click());
@@ -44,6 +46,7 @@ public class buttonHandler : MonoBehaviour,
 
     public void OnPointerEnter(PointerEventData eventData)
     {
+        if (Muted) return;
         if (isInside) return;
         isInside = true;
         hover = true;
@@ -52,6 +55,7 @@ public class buttonHandler : MonoBehaviour,
 
     public void OnPointerUp(PointerEventData eventData)
     {
+        if (Muted) return;
         if (!isPressed) return;
         isPressed = false;
         keyDown = false;
@@ -59,6 +63,7 @@ public class buttonHandler : MonoBehaviour,
 
     public void OnPointerExit(PointerEventData eventData)
     {
+        if (Muted) return;
         if (!isInside) return;
         isInside = false;
         hover = false;
@@ -86,14 +91,37 @@ public class buttonHandler : MonoBehaviour,
         }
     }
 
+    bool _Active;
+    bool _Muted;
     private void Update()
     {
-        if(Active)
+        if(_Active != Active)
         {
-            image.enabled = true;
-        } else
-        {
-            image.enabled = false;
+            _Active = Active;
+            switch (Active)
+            {
+                case true:
+                    canvasGroup.alpha = 1f;
+                    canvasGroup.interactable = true;
+                    canvasGroup.blocksRaycasts = true;
+                    break;
+                case false:
+                    canvasGroup.alpha = 0f;
+                    canvasGroup.interactable = false;
+                    canvasGroup.blocksRaycasts = false;
+                    break;
+            }
         }
+
+        if(!Muted && _Muted == Muted) return;
+        isInside = false;
+        isPressed = false;
+        
+        keyDown = false;
+        Key = false;
+        hover = false;
+        enter = false;
+
+        _Muted = Muted;
     }
 }

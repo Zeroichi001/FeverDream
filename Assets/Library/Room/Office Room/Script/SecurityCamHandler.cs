@@ -10,11 +10,15 @@ public class SecurityCamHandler : MonoBehaviour
 
     [SerializeField]float duration = 1f;
     [SerializeField]AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [SerializeField]AnimationCurve noiseCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     public CamData camData = new CamData();
+    [Range(0,1)] public float NoiseIntensity = 0;
 
     [Header("Reference")]
     [SerializeField] Transform camTarget;
     [SerializeField] buttonHandler Button1, Button2, Button3, Button4;
+    [SerializeField] GameObject Screen;
+    Material screenMat;
     PlayerMain player;
 
     [SerializeField]RenderTexture RT;
@@ -22,19 +26,37 @@ public class SecurityCamHandler : MonoBehaviour
     private void Awake()
     {
         player = PlayerMain.instance;
+        screenMat = Screen.GetComponent<Renderer>().material;
     }
 
     private void OnEnable()
     {
         StartCoroutine(In());
+
         Button1.Active = true;
         Button2.Active = true;
         Button3.Active = true;
         Button4.Active = true;
+        
+        Button1.Muted = false;
+        Button2.Muted = false;
+        Button3.Muted = false;
+        Button4.Muted = false;
     }
     private void OnDisable()
     {
+        Button1.Active = false;
+        Button2.Active = false;
+        Button3.Active = false;
+        Button4.Active = false;
+
         StopAllCoroutines();
+
+        for (int i = 0; i < camData.camList.Count; i++)
+        {
+            if (!camData.camList[i].cam.gameObject.activeInHierarchy) return;
+            camData.camList[i].cam.gameObject.SetActive(false);
+        }
         RT.Release(); //this should make the render texture black
     }
 
@@ -58,52 +80,83 @@ public class SecurityCamHandler : MonoBehaviour
             }
     }
 
+    void monitor()
+    {
+
+    }
+
     void Camera()
     {
         if (Button1.Key)
         {
-            camData.Search(CamData.CamType.DiningRoom).gameObject.SetActive(true);
-            for (int i = 0; i < camData.camList.Count; i++)
-            {
-                if (camData.camList[i].type != CamData.CamType.DiningRoom)
-                {
-                    camData.camList[i].cam.gameObject.SetActive(false);
-                }
-            }
+            StartCoroutine(CamChange(CamData.CamType.DiningRoom));
         }
         if (Button2.Key)
         {
-            camData.Search(CamData.CamType.StorageRoom).gameObject.SetActive(true);
-            for (int i = 0; i < camData.camList.Count; i++)
-            {
-                if (camData.camList[i].type != CamData.CamType.StorageRoom)
-                {
-                    camData.camList[i].cam.gameObject.SetActive(false);
-                }
-            }
+            StartCoroutine(CamChange(CamData.CamType.StorageRoom));
         }
         if (Button3.Key)
         {
-            camData.Search(CamData.CamType.Kitchen).gameObject.SetActive(true);
-            for (int i = 0; i < camData.camList.Count; i++)
-            {
-                if (camData.camList[i].type != CamData.CamType.Kitchen)
-                {
-                    camData.camList[i].cam.gameObject.SetActive(false);
-                }
-            }
+            StartCoroutine(CamChange(CamData.CamType.Kitchen));
         }
         if (Button4.Key)
         {
-            camData.Search(CamData.CamType.EmployeeRoom).gameObject.SetActive(true);
-            for (int i = 0; i < camData.camList.Count; i++)
+            StartCoroutine(CamChange(CamData.CamType.EmployeeRoom));
+        }
+    }
+
+    CamData.CamType currentCamType;
+    [SerializeField] float SwitchDuration = 1f;
+    IEnumerator CamChange(CamData.CamType camType)
+    {
+        float _duration;
+        if (currentCamType != camType)
+        {
+            _duration = Random.Range(0f, 3f);
+            currentCamType = camType;
+        } else _duration = 0f;
+
+        float t = 0f;
+        Button1.Muted = true;
+        Button2.Muted = true;
+        Button3.Muted = true;
+        Button4.Muted = true;
+
+        while (SwitchDuration - t > 0.01f)
+        {
+            t += Time.deltaTime;
+            screenMat.SetFloat("_NoiseIntensity", Mathf.Lerp(0, 1, noiseCurve.Evaluate(t / duration)));
+            yield return null;
+        }
+
+        for (int i = 0; i < camData.camList.Count; i++)
+        {
+            if (camData.camList[i].type == camType)
             {
-                if (camData.camList[i].type != CamData.CamType.EmployeeRoom)
-                {
-                    camData.camList[i].cam.gameObject.SetActive(false);
-                }
+                camData.camList[i].cam.gameObject.SetActive(true);
+            }
+            else
+            {
+                camData.camList[i].cam.gameObject.SetActive(false);
             }
         }
+
+        yield return new WaitForSeconds(_duration);
+
+        t = 0f;
+        while (SwitchDuration - t > 0.01f)
+        {
+            t += Time.deltaTime;
+            screenMat.SetFloat("_NoiseIntensity", Mathf.Lerp(1, 0, noiseCurve.Evaluate(t / duration)));
+            yield return null;
+        }
+        
+        Button1.Muted = false;
+        Button2.Muted = false;
+        Button3.Muted = false;
+        Button4.Muted = false;
+
+        yield return null;
     }
 
     [System.Serializable]

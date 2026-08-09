@@ -6,7 +6,7 @@ public class DoorHandler : MonoBehaviour
 {
     [SerializeField] private Transform open, close;
     [SerializeField] float duration = 5f;
-    [SerializeField] float playerDuration = 5f;
+    //[SerializeField] float playerDuration = 5f;
     [SerializeField] Vector3 openRot, closeRot;
     [SerializeField] AnimationCurve doorAnimate;
     [SerializeField] AnimationCurve playerAnimate;
