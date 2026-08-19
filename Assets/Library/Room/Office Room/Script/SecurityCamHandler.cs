@@ -8,6 +8,11 @@ public class SecurityCamHandler : MonoBehaviour
     // after enable will immedietly move to monitor position
     // every monitor and cam code will be here
 
+    public class Variables
+    {
+        public CamData.CamType currentCam;
+    } public Variables variables = new();
+
     [SerializeField]float duration = 1f;
     [SerializeField]AnimationCurve curve = AnimationCurve.EaseInOut(0, 0, 1, 1);
     [SerializeField]AnimationCurve noiseCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
@@ -18,6 +23,7 @@ public class SecurityCamHandler : MonoBehaviour
     [SerializeField] Transform camTarget;
     [SerializeField] buttonHandler Button1, Button2, Button3, Button4;
     [SerializeField] GameObject Screen;
+    Collider screenCol => gameObject.GetComponent<Collider>();
     Material screenMat;
     PlayerMain player;
 
@@ -33,6 +39,8 @@ public class SecurityCamHandler : MonoBehaviour
     {
         StartCoroutine(In());
 
+        screenCol.enabled = false;
+
         Button1.Active = true;
         Button2.Active = true;
         Button3.Active = true;
@@ -45,6 +53,8 @@ public class SecurityCamHandler : MonoBehaviour
     }
     private void OnDisable()
     {
+        screenCol.enabled = true;
+
         Button1.Active = false;
         Button2.Active = false;
         Button3.Active = false;
@@ -105,15 +115,14 @@ public class SecurityCamHandler : MonoBehaviour
         }
     }
 
-    CamData.CamType currentCamType;
     [SerializeField] float SwitchDuration = 1f;
     IEnumerator CamChange(CamData.CamType camType)
     {
         float _duration;
-        if (currentCamType != camType)
+        if (variables.currentCam != camType)
         {
             _duration = Random.Range(0f, 3f);
-            currentCamType = camType;
+            variables.currentCam = camType;
         } else _duration = 0f;
 
         float t = 0f;
@@ -168,6 +177,7 @@ public class SecurityCamHandler : MonoBehaviour
         public class data
         {
             public CameraController cam;
+            public Camera camRef => cam.GetComponentInChildren<Camera>();
             public CamType type;
         }
 

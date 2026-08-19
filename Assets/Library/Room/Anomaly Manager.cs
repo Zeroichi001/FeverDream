@@ -1,16 +1,32 @@
 using UnityEngine;
+using UnityEngine.UIElements.Experimental;
 
 public class AnomalyManager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    [System.Serializable]
+    public class AnomalyData
     {
-        
-    }
+        public Data[] anomaly;
+        public class Data
+        {
+            public RoomList room;
+            public Anomaly[] anomalies;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+            public class Anomaly
+            {
+                public GameObject Normal;
+                public GameObject Anomalous;
+                public bool isSingle;
+            }
+        }
+
+        public enum RoomList
+        {
+            Dining,
+            kitchen,
+            Storage,
+            Employee
+        }
     }
+    public AnomalyData anomalyData = new();
 }
