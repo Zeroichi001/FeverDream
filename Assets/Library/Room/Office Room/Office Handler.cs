@@ -8,7 +8,7 @@ using static UnityEngine.UI.Image;
 public class OfficeHandler : MonoBehaviour
 {
     [Header("Reference")]
-    [SerializeField] LocalCamHandler localHandler;
+    //[SerializeField] LocalCamHandler localHandler;
     [SerializeField] SecurityCamHandler CamHandler;
     [SerializeField] DoorHandler DoorHandler;
     [SerializeField] OfficeState CurrentState; //this will be hided in future
@@ -104,21 +104,21 @@ public class OfficeHandler : MonoBehaviour
     public void RequestSwitchState(OfficeState target)
     {
         disableButton();
-        localHandler.enabled = false;
+        //localHandler.enabled = false;
         switch (target)
         {
             case OfficeState.Cam:
                 CamHandler.enabled = true;
                 DoorHandler.enabled = false;
-                localHandler.enabled = false;
+                //localHandler.enabled = false;
                 break;
             case OfficeState.Door:
                 DoorHandler.enabled = true;
                 CamHandler.enabled = false;
-                localHandler.enabled = false;
+                //localHandler.enabled = false;
                 break;
             case OfficeState.Local:
-                localHandler.enabled = true;
+                //localHandler.enabled = true;
                 DoorHandler.enabled = false;
                 CamHandler.enabled = false;
                 break;

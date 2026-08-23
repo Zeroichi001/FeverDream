@@ -100,7 +100,10 @@ public class RoomEntry
 
     public enum RoomID
     {
-        OfficeRoom,
-        EmployeRoom
+        DiningRoom,
+        StorageRoom,
+        Kitchen,
+        EmployeeRoom,
+        OfficeRoom
     }
 }

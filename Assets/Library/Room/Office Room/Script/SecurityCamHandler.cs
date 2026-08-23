@@ -10,7 +10,7 @@ public class SecurityCamHandler : MonoBehaviour
 
     public class Variables
     {
-        public CamData.CamType currentCam;
+        public RoomEntry.RoomID currentCam;
     } public Variables variables = new();
 
     [SerializeField]float duration = 1f;
@@ -99,24 +99,24 @@ public class SecurityCamHandler : MonoBehaviour
     {
         if (Button1.Key)
         {
-            StartCoroutine(CamChange(CamData.CamType.DiningRoom));
+            StartCoroutine(CamChange(RoomEntry.RoomID.DiningRoom));
         }
         if (Button2.Key)
         {
-            StartCoroutine(CamChange(CamData.CamType.StorageRoom));
+            StartCoroutine(CamChange(RoomEntry.RoomID.StorageRoom));
         }
         if (Button3.Key)
         {
-            StartCoroutine(CamChange(CamData.CamType.Kitchen));
+            StartCoroutine(CamChange(RoomEntry.RoomID.Kitchen));
         }
         if (Button4.Key)
         {
-            StartCoroutine(CamChange(CamData.CamType.EmployeeRoom));
+            StartCoroutine(CamChange(RoomEntry.RoomID.EmployeeRoom));
         }
     }
 
     [SerializeField] float SwitchDuration = 1f;
-    IEnumerator CamChange(CamData.CamType camType)
+    IEnumerator CamChange(RoomEntry.RoomID camType)
     {
         float _duration;
         if (variables.currentCam != camType)
@@ -178,18 +178,10 @@ public class SecurityCamHandler : MonoBehaviour
         {
             public CameraController cam;
             public Camera camRef => cam.GetComponentInChildren<Camera>();
-            public CamType type;
+            public RoomEntry.RoomID type;
         }
 
-        public enum CamType
-        {
-            DiningRoom,
-            StorageRoom,
-            Kitchen,
-            EmployeeRoom,
-        }
-
-        public CameraController Search(CamType cam) 
+        public CameraController Search(RoomEntry.RoomID cam) 
         { 
             for (int i = 0; i < camList.Count; i++)
             {

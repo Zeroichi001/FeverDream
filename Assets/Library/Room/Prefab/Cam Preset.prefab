@@ -72,7 +72,7 @@ Camera:
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 31
+    m_Bits: 95
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 8400000, guid: 7196721431926be4d89249e4562bd0d3, type: 2}
   m_TargetDisplay: 0
@@ -246,6 +246,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CameraController
   CameraAngle: 0
+  CameraTilt: 0
+  CameraAngleRange: {x: 0, y: 0, z: 0, w: 0}
   cam: {fileID: 5827907980054441475}
   FrameRate: 12
 --- !u!1 &5827907980054441475 stripped
