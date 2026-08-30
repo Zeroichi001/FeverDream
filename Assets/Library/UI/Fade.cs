@@ -6,7 +6,6 @@ using Unity.Mathematics;
 
 public class FadeController : MonoBehaviour
 {
-    CanvasUIManager canvas;
     [Range(0, 1)] float Alpha;
     public Color BaseColor;
     private Image image;
@@ -14,19 +13,15 @@ public class FadeController : MonoBehaviour
     private void Awake()
     {
         image = GetComponent<Image>();
-        canvas = gameObject.GetComponentInParent<CanvasUIManager>();
     }
 
     private void Update()
     {
         // Jaga RGB tetap sama, alpha tidak disentuh
         Color c = image.color;
-        if (c.r != BaseColor.r || c.g != BaseColor.g || c.b != BaseColor.b || c.a != canvas.fade)
+        if (Mathf.Abs(Alpha - c.a) > 0.01f)
         {
-            c.r = BaseColor.r;
-            c.g = BaseColor.g;
-            c.b = BaseColor.b;
-            c.a = canvas.fade;
+            c.a = Alpha;
             image.color = c;
         }
 
@@ -34,41 +29,38 @@ public class FadeController : MonoBehaviour
 
     public IEnumerator FadeIn(float duration, Action onComplete)
     {
-        float elapsed = 0f;
+        float t = 0f;
         Color c = image.color;
 
         float startAlpha = c.a;
         float endAlpha = 1f;
 
-        while (elapsed < duration)
+        while ((duration - t) > 0.01f)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
+            t += Time.deltaTime;
 
-            c.a = Mathf.Lerp(startAlpha, endAlpha, t);
-            image.color = c;     // ⭐ WAJIB
+            Alpha = Mathf.Lerp(startAlpha, endAlpha, t / duration);
             yield return null;
         }
-
+        Alpha = endAlpha;
         onComplete?.Invoke();
     }
 
     public IEnumerator FadeOut(float duration)
     {
-        float elapsed = 0f;
+        float t = 0f;
         Color c = image.color;
 
         float startAlpha = c.a;
         float endAlpha = 0f;
 
-        while (elapsed < duration)
+        while ((duration - t) > 0.01f)
         {
-            elapsed += Time.deltaTime;
-            float t = elapsed / duration;
+            t += Time.deltaTime;
 
-            c.a = Mathf.Lerp(startAlpha, endAlpha, t);
-            image.color = c;     // ⭐ WAJIB
+            Alpha = Mathf.Lerp(startAlpha, endAlpha, t / duration);
             yield return null;
         }
+        Alpha = endAlpha;
     }
 }

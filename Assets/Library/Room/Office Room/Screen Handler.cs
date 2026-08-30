@@ -14,6 +14,8 @@ public class ScreenHandler : MonoBehaviour
     [SerializeField] float EyeSpeed = .3f;
     [SerializeField] float DragSpeed = 1f;
 
+    CanvasUIManager canvas => CanvasUIManager.Instance;
+
     #endregion
 
     private void Update()
@@ -34,7 +36,6 @@ public class ScreenHandler : MonoBehaviour
     Coroutine Detect;
     IEnumerator HitAnomaly()
     {
-        Debug.Log("start");
 
         Ray hit = Camera.main.ScreenPointToRay(Input.mousePosition);
         if (Physics.Raycast(hit, out RaycastHit rayHit, 10))
@@ -61,16 +62,22 @@ public class ScreenHandler : MonoBehaviour
 
         float t = 0;
         bool cancel = false;
+        float last = 0f;
+        float remain = 0f;
         while ((EyeCloseDuration - t) > 0.01f)
         {
-            if ((EyeSpeed - t) > 0.01f)
+            if ((EyeSpeed - t) > 0.001f)
             {
                 //do eye close animation step
+                canvas.BlinkC.Blink = Mathf.Lerp(0f, 1f, t / EyeSpeed);
             }
+            else canvas.BlinkC.Blink = 1f;
 
             if (!Input.GetMouseButton(1))
             {
                 cancel = true;
+                last = canvas.BlinkC.Blink;
+                remain = t;
                 break;
             }
             t += Time.deltaTime;
@@ -79,38 +86,38 @@ public class ScreenHandler : MonoBehaviour
 
         while (cancel)
         {
-            Debug.Log("cancel");
             if (t > 0.01f)
             {
                 //do eye open animation step
+                canvas.BlinkC.Blink = Mathf.Lerp( 0f, last, t / remain);
                 t -= Time.deltaTime;
             } else
             {
+                canvas.BlinkC.Blink = 0f;
                 Detect = null;
                 yield break;
             }
 
             yield return null;
         }//cancel loop
-        Debug.Log("detected");
 
         AnomalyManager.Instance.anomalyData.ClearAnomaly(Main.variables.currentCam, hitBox.GetComponent<HitBox>().DetectedObject);//change anomaly state to normal
 
-        Debug.Log("done");
         GameObject test = hitBox.GetComponent<HitBox>().DetectedObject;
-        Debug.Log(test);
         t = 0f;
         while (true)
         {
-            if (t > 0.01f)
+            if ((EyeSpeed - t) > 0.01f)
             {
                 //do eye open animation step
+                canvas.BlinkC.Blink = Mathf.Lerp(1f, 0f, t / EyeSpeed);
                 t += Time.deltaTime;
             }
             else break;
 
             yield return null;
         }//do eye open animation step
+        canvas.BlinkC.Blink = 0f;
         Detect =null;
     }
 

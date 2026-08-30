@@ -69,24 +69,18 @@ public class RoomManajer : MonoBehaviour
     IEnumerator Move(Transform target)
     {
         float fadeDuration = 0.5f;
-        float timer = 0f;
-        while (timer < fadeDuration)
+        bool paused = true;
+        yield return StartCoroutine(player.canvas.FadeC.FadeIn(fadeDuration, () =>
         {
-            timer += Time.deltaTime / fadeDuration;
-            player.canvas.fade = Mathf.Lerp(player.canvas.fade, 1f, timer);
-            yield return null;
-        }
-        timer = 0f;
+            paused = false;
+        }));
+        yield return new WaitUntil(() => !paused);
+
         player.gameObject.transform.position = target.position;
         player.gameObject.transform.rotation = target.rotation;
         yield return new WaitForSeconds(fadeDuration);
 
-        while (timer < 1f)
-        {
-            timer = Time.deltaTime / fadeDuration;
-            player.canvas.fade = Mathf.Lerp(player.canvas.fade, 0f, timer);
-            yield return null;
-        }
+        yield return StartCoroutine(player.canvas.FadeC.FadeOut(fadeDuration));
     }
     #endregion
 }
