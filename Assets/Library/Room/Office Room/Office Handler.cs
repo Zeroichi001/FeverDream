@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using UnityEditor;
 using UnityEngine;
 using static playermanajer;
 using static UnityEngine.UI.Image;
@@ -13,6 +14,7 @@ public class OfficeHandler : MonoBehaviour
     [SerializeField] DoorHandler DoorHandler;
     [SerializeField] OfficeState CurrentState; //this will be hided in future
     [SerializeField] Transform localTarget;
+    [SerializeField] GameObject UIparrent;
     [SerializeField] buttonHandler Left, Right, Back;
     [SerializeField] List<GameObject> interactable;
     [SerializeField] List<Vector3> rotation;
@@ -27,10 +29,6 @@ public class OfficeHandler : MonoBehaviour
     public float duration = 1f;
 
     #region Core ///Core of script///
-    private void Start()
-    {
-        buttonHandling();
-    }
 
     private void Update()
     {
@@ -44,7 +42,18 @@ public class OfficeHandler : MonoBehaviour
         Controller();
     }
 
-    void Controller()
+    private void OnEnable() // Turn on every thing needed in this handler //
+    {
+        UIparrent.SetActive(true);
+        buttonHandling();
+    }
+
+    private void OnDisable() // Turn off every thing in this handler //
+    {
+        UIparrent.SetActive(false);
+    }
+
+    void Controller() // Method that run Input in this handler // 
     {
         if (Input.GetMouseButton(0))
         {
