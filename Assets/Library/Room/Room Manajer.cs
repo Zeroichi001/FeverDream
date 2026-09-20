@@ -15,6 +15,12 @@ public class RoomManajer : MonoBehaviour
 
     //References
     PlayerMain player => PlayerMain.instance;
+    [SerializeField] GameObject LobbyUIParent;
+
+    //System
+    public Vector2 Timer { get; private set; } = new Vector2(0, 0);
+    public int Interval { get => 10 - Mathf.RoundToInt(Timer.x); }
+
     #endregion
 
     #region Core ///Core of script///
@@ -33,9 +39,10 @@ public class RoomManajer : MonoBehaviour
 
     private void Update() // still in development
     {
-
+        Counter();
     }
 
+    bool isLobbyUIActive = false;
     private void OnDisable() // Function Run in Disable, turn off every handlers //
     {
         foreach (var r in rooms)
@@ -43,6 +50,7 @@ public class RoomManajer : MonoBehaviour
             if (!r.handler.isActiveAndEnabled) return;
             r.handler.enabled = false;
         }
+        isLobbyUIActive = true;
     }
 
     private void OnEnable() // Function Run in Enable, teleporting to office when enabled //
@@ -57,6 +65,16 @@ public class RoomManajer : MonoBehaviour
         }
 
         RoomHandlerers(RoomEntry.RoomID.OfficeRoom, target);
+        Timer = new Vector2(0, 0);
+    }
+
+    void Counter() // Time Counter // 
+    {
+        Timer = new Vector2(Timer.x, Timer.y + Time.deltaTime);
+        if (Timer.y >= 60)
+        {
+            Timer = new Vector2(Timer.x + 1, 0);
+        }
     }
 
     #endregion
@@ -84,6 +102,8 @@ public class RoomManajer : MonoBehaviour
         player.gameObject.transform.position = pos.position;
         player.gameObject.transform.rotation = pos.rotation;
         CurrentPos = target;
+
+        if (isLobbyUIActive) LobbyUIParent.SetActive(false);
         
         foreach (var r in rooms)
         {

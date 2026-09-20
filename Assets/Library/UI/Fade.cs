@@ -6,7 +6,7 @@ using Unity.Mathematics;
 
 public class FadeController : MonoBehaviour
 {
-    [Range(0, 1)] float Alpha;
+    [HideInInspector, Range(0, 1)] public float Alpha;
     public Color BaseColor;
     private Image image;
 

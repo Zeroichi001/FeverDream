@@ -22,6 +22,7 @@ public class SecurityCamHandler : MonoBehaviour
     [Header("Reference")]
     [SerializeField] Transform camTarget;
     [SerializeField] buttonHandler Button1, Button2, Button3, Button4;
+    [SerializeField] GameObject UIparrent;
     [SerializeField] GameObject Screen;
     Collider screenCol => gameObject.GetComponent<Collider>();
     Material screenMat;
@@ -31,6 +32,10 @@ public class SecurityCamHandler : MonoBehaviour
 
     private void Awake()
     {
+        Button1.Active = false;
+        Button2.Active = false;
+        Button3.Active = false;
+        Button4.Active = false;
         player = PlayerMain.instance;
         screenMat = Screen.GetComponent<Renderer>().material;
     }
@@ -50,6 +55,7 @@ public class SecurityCamHandler : MonoBehaviour
         Button2.Muted = false;
         Button3.Muted = false;
         Button4.Muted = false;
+        //UIparrent.SetActive(true);
     }
     private void OnDisable()
     {

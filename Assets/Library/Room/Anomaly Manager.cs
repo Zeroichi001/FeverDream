@@ -4,11 +4,16 @@ using UnityEngine.UIElements.Experimental;
 
 public class AnomalyManager : MonoBehaviour
 {
+
     public static AnomalyManager Instance { get; private set; }
+
+    GameManager GM => GameManager.instance;
+    RoomManajer RM => RoomManajer.instance;
 
     public AnomalyData anomalyData = new AnomalyData();
     public Dictionary<string, int> CurrentNight = new Dictionary<string, int>();
     public Dictionary<string, int> ActiveAnomaly = new Dictionary<string, int>();
+
 
     private void Awake()
     {
@@ -56,27 +61,29 @@ public class AnomalyManager : MonoBehaviour
         {
             for (int j = 0; j < anomalyData.anomaly[i].anomalies.Length; j++)
             {
-                CurrentNight.Add(anomalyData.anomaly[i].anomalies[j].Name, anomalyData.anomaly[i].anomalies[j].Weight);
+                if (anomalyData.anomaly[i].anomalies[j].Level <= GM.Difficulty)
+                {
+                    CurrentNight.Add(anomalyData.anomaly[i].anomalies[j].Name, anomalyData.anomaly[i].anomalies[j].Weight);
+                }
             }
         }
     }
 
     private void RNGanomaly()
     {
-        int value = 20;
         List<string> ID = new List<string>();
 
-        foreach (var anomaly in CurrentNight)
+        if (Random.Range(1 , 20) <= GM.Difficulty)
         {
-            if (anomaly.Value <= value)
+            foreach (var anomaly in CurrentNight)
             {
                 ID.Add(anomaly.Key);
+                if (anomaly.Value <= RM.Interval) // weights less than interval as weight level
+                {
+                    ID.Add(anomaly.Key);
+                }
             }
-        }
 
-        int Difficulty = 5;
-        if (Random.Range(1 , 20) <= Difficulty)
-        {
             int RNG = Random.Range(0, ID.Count);
             for (int i = 0; i < ID.Count; i++)
             {
@@ -88,7 +95,7 @@ public class AnomalyManager : MonoBehaviour
                 }
             }
         }
-    }///Random Anomaly Activator
+    }//Random Anomaly Activator
 }
 
 [System.Serializable]

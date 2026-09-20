@@ -20,8 +20,8 @@ public class buttonHandler : MonoBehaviour,
     bool isPressed;
     bool isInside;
 
-    [HideInInspector] public bool Active = true;
-    [HideInInspector] public bool Muted = false;
+    public bool Active = true;
+    public bool Muted = false;
 
     void Start()
     {
@@ -33,6 +33,8 @@ public class buttonHandler : MonoBehaviour,
         {
             Debug.LogWarning("this gameobject doesn't have CanvasGroup component");
         }
+
+        actived();
     }
 
     public void OnPointerDown(PointerEventData eventData)
@@ -93,26 +95,31 @@ public class buttonHandler : MonoBehaviour,
 
     bool _Active;
     bool _Muted;
+    void actived()
+    {
+        _Active = Active;
+        switch (Active)
+        {
+            case true:
+                canvasGroup.alpha = 1f;
+                canvasGroup.interactable = true;
+                canvasGroup.blocksRaycasts = true;
+                break;
+            case false:
+                canvasGroup.alpha = 0f;
+                canvasGroup.interactable = false;
+                canvasGroup.blocksRaycasts = false;
+                break;
+        }
+    }
+
     private void Update()
     {
-        if(_Active != Active)
+        if (_Active != Active)
         {
-            _Active = Active;
-            switch (Active)
-            {
-                case true:
-                    canvasGroup.alpha = 1f;
-                    canvasGroup.interactable = true;
-                    canvasGroup.blocksRaycasts = true;
-                    break;
-                case false:
-                    canvasGroup.alpha = 0f;
-                    canvasGroup.interactable = false;
-                    canvasGroup.blocksRaycasts = false;
-                    break;
-            }
+            actived();
         }
-
+        
         if(!Muted && _Muted == Muted) return;
         isInside = false;
         isPressed = false;

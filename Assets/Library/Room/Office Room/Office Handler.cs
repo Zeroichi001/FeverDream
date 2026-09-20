@@ -1,10 +1,8 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Mathematics;
-using UnityEditor;
 using UnityEngine;
-using static playermanajer;
-using static UnityEngine.UI.Image;
 
 public class OfficeHandler : MonoBehaviour
 {
@@ -14,7 +12,6 @@ public class OfficeHandler : MonoBehaviour
     [SerializeField] DoorHandler DoorHandler;
     [SerializeField] OfficeState CurrentState; //this will be hided in future
     [SerializeField] Transform localTarget;
-    [SerializeField] GameObject UIparrent;
     [SerializeField] buttonHandler Left, Right, Back;
     [SerializeField] List<GameObject> interactable;
     [SerializeField] List<Vector3> rotation;
@@ -23,7 +20,7 @@ public class OfficeHandler : MonoBehaviour
     [SerializeField] AnimationCurve tilt;
 
     PlayerMain player => PlayerMain.instance;
-    int CurRot;
+    [SerializeField] int CurRot;
 
     [Header("variable")]
     public float duration = 1f;
@@ -44,13 +41,7 @@ public class OfficeHandler : MonoBehaviour
 
     private void OnEnable() // Turn on every thing needed in this handler //
     {
-        UIparrent.SetActive(true);
-        buttonHandling();
-    }
-
-    private void OnDisable() // Turn off every thing in this handler //
-    {
-        UIparrent.SetActive(false);
+        buttonManager();
     }
 
     void Controller() // Method that run Input in this handler // 
@@ -76,19 +67,6 @@ public class OfficeHandler : MonoBehaviour
             StopAllCoroutines();
             RequestSwitchState(OfficeState.Local);
             StartCoroutine(Cam(false));
-            //switch (CurrentState)
-            //{
-            //    case OfficeState.Cam:
-            //        StopAllCoroutines();
-            //        //StartCoroutine(Cam(false));
-            //        RequestSwitchState(OfficeState.Local);
-            //        break;
-            //    case OfficeState.Door:
-            //        StopAllCoroutines();
-            //        RequestSwitchState(OfficeState.Local);
-            //        //StartCoroutine(camRots(rotation[1]));
-            //        break;
-            //}
         }
 
         if (CurrentState == OfficeState.Local)
@@ -133,7 +111,7 @@ public class OfficeHandler : MonoBehaviour
                 break;
         }
         CurrentState = target;
-        buttonHandling();
+        buttonManager();
     }
 
     private void disableButton()
@@ -142,13 +120,9 @@ public class OfficeHandler : MonoBehaviour
         Right.Active = false;
         Back.Active = false;
     }
-    private void buttonHandling()
-    {
-        if (CurrentState == OfficeState.Cam || CurrentState == OfficeState.Door)
-        {
-            Back.Active = true;
-        } else Back.Active = false;
 
+    private void buttonManager()
+    {
         if (CurrentState == OfficeState.Local)
         {
             switch (CurRot)
@@ -156,18 +130,20 @@ public class OfficeHandler : MonoBehaviour
                 case 0:
                     Left.Active = false;
                     Right.Active = true;
+                    Back.Active = false;
                     break;
-
                 case 1:
                     Left.Active = true;
                     Right.Active = false;
-                    break;
-
-                default:
-                    Left.Active = false;
-                    Right.Active = false;
+                    Back.Active = false;
                     break;
             }
+        }
+        else
+        {
+            Left.Active = false;
+            Right.Active = false;
+            Back.Active = true;
         }
     }
 
@@ -184,13 +160,13 @@ public class OfficeHandler : MonoBehaviour
             player.transform.rotation = Quaternion.Lerp(startRot, localTarget.rotation, local.Evaluate(t / duration));
             yield return null;
         }
-        buttonHandling();
+        buttonManager();
     }
 
     IEnumerator camRots(Vector3 target, bool right)
     {
         disableButton();
-        Quaternion rot = Quaternion.Euler(0 , target.y, 0);
+        Quaternion rot = Quaternion.Euler(0, target.y, 0);
         float t = 0f;
         Quaternion startRot = player.cam.transform.localRotation;
 
@@ -203,7 +179,17 @@ public class OfficeHandler : MonoBehaviour
             player.cam.transform.localRotation = currentRot * Quaternion.Euler(0, 0, tiltValue);
             yield return null;
         }
-        buttonHandling();
+        switch (CurRot)
+        {
+            case 0:
+                Left.Active = false;
+                Right.Active = true;
+                break;
+            case 1:
+                Left.Active = true;
+                Right.Active = false;
+                break;
+        }
     }
     #endregion  
 }
