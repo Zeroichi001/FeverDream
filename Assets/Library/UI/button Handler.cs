@@ -22,6 +22,7 @@ public class buttonHandler : MonoBehaviour,
 
     public bool Active = true;
     public bool Muted = false;
+    [Range(0,1)]public float Alpha = 1f;
 
     void Start()
     {
@@ -119,8 +120,13 @@ public class buttonHandler : MonoBehaviour,
         {
             actived();
         }
-        
-        if(!Muted && _Muted == Muted) return;
+
+        if (_Active)
+        {
+            canvasGroup.alpha = Alpha;
+        }
+
+        if (!Muted && _Muted == Muted) return;
         isInside = false;
         isPressed = false;
         

@@ -15,7 +15,7 @@ public class RoomManajer : MonoBehaviour
 
     //References
     PlayerMain player => PlayerMain.instance;
-    [SerializeField] GameObject LobbyUIParent;
+    GameManager Gm => GameManager.instance;
 
     //System
     public Vector2 Timer { get; private set; } = new Vector2(0, 0);
@@ -45,6 +45,7 @@ public class RoomManajer : MonoBehaviour
     bool isLobbyUIActive = false;
     private void OnDisable() // Function Run in Disable, turn off every handlers //
     {
+        if (GameManager.AppQuiting) return;
         foreach (var r in rooms)
         {
             if (!r.handler.isActiveAndEnabled) return;
@@ -102,8 +103,6 @@ public class RoomManajer : MonoBehaviour
         player.gameObject.transform.position = pos.position;
         player.gameObject.transform.rotation = pos.rotation;
         CurrentPos = target;
-
-        if (isLobbyUIActive) LobbyUIParent.SetActive(false);
         
         foreach (var r in rooms)
         {

@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
     //Variables
     public int Difficulty { get; private set; } = 0;
+    public static bool AppQuiting { get; private set; } = false;
 
     #endregion
 
@@ -34,6 +35,12 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        Application.quitting += quit;
+    }
+
+    void quit()
+    {
+        AppQuiting = true;
     }
 
     private void Start()
